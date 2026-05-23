@@ -10,21 +10,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/workers")
 public class WorkerController {
 
     private final WorkerService workerService;
+    private final com.sattaees.sattaees.util.JwtUtil jwtUtil;
 
-    public WorkerController(WorkerService workerService) {
+    public WorkerController(WorkerService workerService, com.sattaees.sattaees.util.JwtUtil jwtUtil) {
         this.workerService = workerService;
+        this.jwtUtil = jwtUtil;
     }
 
     // CREATE WORKER
     @PostMapping
-    public ResponseEntity<Worker> createWorker(@RequestBody Worker worker) {
+    public ResponseEntity<?> createWorker(@RequestBody Worker worker) {
         Worker savedWorker = workerService.createWorker(worker);
-        return ResponseEntity.ok(savedWorker);
+        String token = jwtUtil.generateToken(savedWorker.getEmail(), "WORKER", savedWorker.getId());
+        return ResponseEntity.ok(new com.sattaees.sattaees.dto.AuthResponse(token, savedWorker));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody com.sattaees.sattaees.dto.LoginRequest req) {
+        Worker w = workerService.loginWorker(req.getEmail(), req.getPassword());
+        if(w != null) {
+            String token = jwtUtil.generateToken(w.getEmail(), "WORKER", w.getId());
+            return ResponseEntity.ok(new com.sattaees.sattaees.dto.AuthResponse(token, w));
+        }
+        return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 
     // GET ALL WORKERS

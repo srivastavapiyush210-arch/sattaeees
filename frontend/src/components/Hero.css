@@ -1,0 +1,149 @@
+.hero-section {
+  padding: 140px 20px 80px 20px;
+  min-height: 85vh;
+  position: relative;
+  background: var(--bg-core); /* Default blank background per Figma */
+  overflow: hidden;
+}
+
+/* Subtle background gradient to match Figma glow behind right card */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(37, 99, 235, 0.08) 50%, transparent 70%);
+  z-index: 0;
+}
+
+.hero-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-left {
+  flex: 1;
+  max-width: 600px;
+}
+
+.hero-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 4rem;
+  line-height: 1.15;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 24px;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 500px;
+}
+
+.hero-search-box {
+  background: var(--bg-core);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+}
+
+.search-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: transparent;
+  border-right: 1px solid var(--glass-border);
+}
+.search-field:nth-child(2) { border-right: none; }
+
+.search-field input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+.search-field input::placeholder { color: var(--text-muted); font-size: 0.95rem; }
+
+.btn-search-solid {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-search-solid:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+
+/* Right Side Services Card */
+.hero-right {
+  display: none; /* Mobile hide default */
+}
+@media (min-width: 1024px) {
+  .hero-right {
+     display: block;
+     flex: 1;
+     max-width: 550px;
+  }
+}
+
+.services-grid-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+[data-theme='dark'] .services-grid-card {
+  background: rgba(16, 23, 42, 0.6);
+}
+
+.service-square {
+  background: var(--bg-core);
+  border-radius: 16px;
+  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.service-square:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.sv-icon { color: var(--primary); }
+.sv-text {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 1.05rem;
+}

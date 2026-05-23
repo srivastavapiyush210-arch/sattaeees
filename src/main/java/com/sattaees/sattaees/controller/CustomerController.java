@@ -14,16 +14,29 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final com.sattaees.sattaees.util.JwtUtil jwtUtil;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, com.sattaees.sattaees.util.JwtUtil jwtUtil) {
         this.customerService = customerService;
+        this.jwtUtil = jwtUtil;
     }
 
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<?> createCustomer(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.createCustomer(customer);
-        return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
+        String token = jwtUtil.generateToken(savedCustomer.getEmail(), "CUSTOMER", savedCustomer.getId());
+        return new ResponseEntity<>(new com.sattaees.sattaees.dto.AuthResponse(token, savedCustomer), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody com.sattaees.sattaees.dto.LoginRequest req) {
+        Customer c = customerService.loginCustomer(req.getEmail(), req.getPassword());
+        if(c != null) {
+            String token = jwtUtil.generateToken(c.getEmail(), "CUSTOMER", c.getId());
+            return ResponseEntity.ok(new com.sattaees.sattaees.dto.AuthResponse(token, c));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 
 

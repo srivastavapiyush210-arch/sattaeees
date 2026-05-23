@@ -1,0 +1,91 @@
+.navbar {
+  padding: 16px 28px;
+  background: var(--bg-core);
+  border-bottom: 1px solid var(--glass-border);
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  box-shadow: none !important;
+  border-radius: 0;
+}
+
+/* Bulletproof grid to ensure actions never wrap below title */
+.nav-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+}
+
+.nav-brand {
+  justify-self: start;
+}
+
+.nav-brand a {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.nav-links {
+  justify-self: center;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.nav-link-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.nav-link-pill:hover {
+  background: rgba(37, 99, 235, 0.05);
+  color: var(--text-main);
+}
+
+.nav-link-pill.active {
+  background: var(--primary);
+  color: white;
+}
+
+.nav-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.notification-btn {
+  position: relative;
+}
+.notification-dot {
+  position: absolute;
+  top: 0px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid var(--bg-core);
+}

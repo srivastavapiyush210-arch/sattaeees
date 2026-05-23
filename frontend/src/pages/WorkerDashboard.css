@@ -1,0 +1,167 @@
+/* Status Grid */
+.w-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+@media (max-width: 1024px) {
+  .w-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.w-stat-card {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+.w-stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  background: var(--surface-hover);
+}
+
+.icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bg-blue { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); }
+.bg-orange { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); }
+.bg-blue-light { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.15); }
+.bg-green { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
+
+.w-stat-body h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text-main);
+  line-height: 1;
+}
+.w-stat-body p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Status Flow Card */
+.w-status-flow-card {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 48px;
+  box-shadow: var(--glass-shadow);
+}
+.w-status-flow-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 32px;
+  color: var(--text-main);
+  text-align: center;
+}
+@media (min-width: 1024px) {
+  .w-status-flow-card h3 { text-align: left; }
+}
+
+.flow-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .flow-track { flex-direction: column; gap: 16px; }
+  .flow-line { display: none !important; }
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.f-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: white;
+}
+.f-orange { background: #f59e0b; }
+.f-green { background: #10b981; }
+.f-blue { background: #3b82f6; }
+.f-dark { background: #475569; }
+[data-theme='dark'] .f-dark { background: #cbd5e1; color: #0f172a;}
+
+.flow-step span {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+}
+
+.flow-line {
+  flex: 1;
+  height: 2px;
+  background: var(--glass-border);
+  margin: 0 24px;
+  transform: translateY(-16px);
+}
+
+/* Worker Jobs Grid */
+.w-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+@media (max-width: 1024px) {
+  .w-jobs-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .w-jobs-grid { grid-template-columns: 1fr; }
+}
+
+.flex-between-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.w-action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+.w-action-buttons button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+  border: none;
+  font-size: 0.95rem;
+}
+.btn-w-accept { background: #10b981; }
+.btn-w-accept:hover { background: #059669; }
+.btn-w-reject { background: #ef4444; }
+.btn-w-reject:hover { background: #dc2626; }
+.btn-w-inprogress { background: #3b82f6; }
+.btn-w-inprogress:hover { background: #2563eb; }
+.btn-w-complete { background: #10b981; }
+.btn-w-complete:hover { background: #059669; }

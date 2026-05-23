@@ -12,14 +12,23 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
     public Customer createCustomer(Customer customer) {
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         return customerRepository.save(customer);
+    }
+    
+    public Customer loginCustomer(String email, String password) {
+        return customerRepository.findByEmail(email)
+            .filter(c -> passwordEncoder.matches(password, c.getPassword()))
+            .orElse(null);
     }
 
 

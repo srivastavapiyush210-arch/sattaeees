@@ -1,0 +1,107 @@
+.workers-page {
+  padding-top: 120px;
+  padding-bottom: 80px;
+  min-height: 100vh;
+}
+.page-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.page-header h1 {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+.page-header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 48px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filter-inputs {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  min-width: 300px;
+}
+.input-group {
+  flex: 1;
+}
+.search-btn-wide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.workers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.loading-state {
+  text-align: center;
+  padding: 60px;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.service-cat-card {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 32px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.cat-card-icon {
+  color: var(--primary);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.service-cat-card h3 {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 0px;
+  font-weight: 700;
+}
+
+.service-cat-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  background: var(--surface-hover);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+.service-cat-card:hover .cat-card-icon {
+  transform: scale(1.1);
+}
+
+.service-cat-card.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(37, 99, 235, 0.4);
+}
+.service-cat-card.active h3, .service-cat-card.active .cat-card-icon {
+  color: white;
+}

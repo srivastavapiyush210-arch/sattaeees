@@ -1,0 +1,186 @@
+.dashboard-wrapper {
+  padding-top: 100px;
+  padding-bottom: 80px;
+  background: var(--bg-core);
+  min-height: 100vh;
+}
+
+.dash-header {
+  margin-bottom: 40px;
+}
+.dash-header h1 {
+  font-size: 2.2rem;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+.dash-header p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+/* LEFT COLUMN */
+.search-filter-card {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--glass-shadow);
+  margin-bottom: 40px;
+}
+
+.card-title-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  margin-bottom: 24px;
+  color: var(--text-main);
+}
+
+.search-row-flex {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+@media (max-width: 768px) {
+  .search-row-flex { flex-direction: column; }
+}
+
+.search-input-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: transparent;
+}
+.search-input-field input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.search-actions-flex {
+  display: flex;
+  gap: 12px;
+}
+.full-w { flex: 1; }
+.btn-grey {
+  background: rgba(0,0,0,0.05);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-main);
+  transition: background 0.2s;
+}
+[data-theme='dark'] .btn-grey { background: rgba(255,255,255,0.05); }
+
+.avail-section-head h3 {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: var(--text-main);
+}
+
+.dash-workers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+@media(max-width: 768px) {
+  .dash-workers-grid { grid-template-columns: 1fr; }
+}
+
+/* RIGHT COLUMN */
+.dash-right h3 {
+  font-size: 1.4rem;
+  margin-bottom: 24px;
+  color: var(--text-main);
+}
+
+.requests-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.job-card-figma {
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+.job-card-figma:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  background: var(--surface-hover);
+}
+
+.job-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.job-card-head h4 { font-size: 1.15rem; font-weight: 700; color: var(--text-main);}
+
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.badge-pill .dot { width: 6px; height: 6px; border-radius: 50%; opacity: 0.8; background: currentColor; }
+
+.badge-requested { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.badge-accepted { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.badge-in_progress { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+.badge-completed { background: rgba(100, 116, 139, 0.1); color: #64748b; }
+.badge-cancelled { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+.job-card-worker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.job-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.job-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

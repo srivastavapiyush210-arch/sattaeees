@@ -1,0 +1,154 @@
+.worker-figma-card {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.worker-figma-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  background: var(--surface-hover);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.worker-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.worker-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--glass-border);
+  flex-shrink: 0;
+}
+.worker-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.worker-info h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--text-main);
+}
+.worker-skill {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.worker-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.worker-stats-row span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.rating-text {
+  color: var(--text-main) !important;
+  font-weight: 600;
+}
+
+.worker-status-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-badge-figma {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.status-badge-figma.available {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.status-badge-figma.available .dot {
+  width: 6px; height: 6px; background: #10b981; border-radius: 50%;
+}
+.status-badge-figma.busy {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+.status-badge-figma.busy .dot {
+  width: 6px; height: 6px; background: #ef4444; border-radius: 50%;
+}
+
+.worker-price {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.worker-action-row {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-view-profile {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.btn-view-profile:hover {
+  background: rgba(0,0,0,0.03);
+  border-color: var(--text-muted);
+}
+
+.btn-hire-now {
+  flex: 1;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-unavailable {
+  flex: 1;
+  background: var(--glass-border);
+  color: var(--text-muted);
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: not-allowed;
+}

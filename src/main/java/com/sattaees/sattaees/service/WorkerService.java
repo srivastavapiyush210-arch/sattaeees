@@ -12,14 +12,23 @@ import java.util.List;
 public class WorkerService {
 
     private final WorkerRepository workerRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public WorkerService(WorkerRepository workerRepository) {
+    public WorkerService(WorkerRepository workerRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.workerRepository = workerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // CREATE
     public Worker createWorker(Worker worker) {
+        worker.setPassword(passwordEncoder.encode(worker.getPassword()));
         return workerRepository.save(worker);
+    }
+    
+    public Worker loginWorker(String email, String password) {
+        return workerRepository.findByEmail(email)
+            .filter(w -> passwordEncoder.matches(password, w.getPassword()))
+            .orElse(null);
     }
 
     // READ ALL
