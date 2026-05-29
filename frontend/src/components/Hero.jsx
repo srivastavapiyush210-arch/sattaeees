@@ -18,6 +18,22 @@ const Hero = () => {
          
          {/* Left Side: Copy and Search */}
          <div className="hero-left">
+            <div className="ishan-badge" style={{
+               display: 'inline-flex',
+               alignItems: 'center',
+               background: 'rgba(99, 102, 241, 0.15)',
+               color: 'var(--primary)',
+               padding: '6px 14px',
+               borderRadius: '50px',
+               fontSize: '0.85rem',
+               fontWeight: '600',
+               marginBottom: '16px',
+               border: '1px solid rgba(99, 102, 241, 0.25)',
+               letterSpacing: '0.5px',
+               width: 'fit-content'
+            }}>
+               ✨ This is Ishan
+            </div>
             <h1 className="hero-title">
                Find Trusted <br />
                <span style={{color: 'var(--primary)'}}>Profe</span><span style={{color: 'var(--secondary)'}}>ssionals</span> for <br />
