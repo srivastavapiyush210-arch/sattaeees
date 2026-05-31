@@ -1,52 +1,80 @@
 package com.sattaees.sattaees.service;
 
+import com.sattaees.sattaees.exception.DuplicateResourceException;
+import com.sattaees.sattaees.exception.ResourceNotFoundException;
 import com.sattaees.sattaees.model.Worker;
 import com.sattaees.sattaees.repository.WorkerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class WorkerService {
 
     private final WorkerRepository workerRepository;
-    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public WorkerService(WorkerRepository workerRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+    public WorkerService(WorkerRepository workerRepository, PasswordEncoder passwordEncoder) {
         this.workerRepository = workerRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // CREATE
     public Worker createWorker(Worker worker) {
+        log.info("Attempting to register worker with email: {}", worker.getEmail());
+        if (workerRepository.findByEmail(worker.getEmail()).isPresent()) {
+            log.warn("Worker registration failed: Email {} is already taken", worker.getEmail());
+            throw new DuplicateResourceException("Email address already registered: " + worker.getEmail());
+        }
         worker.setPassword(passwordEncoder.encode(worker.getPassword()));
-        return workerRepository.save(worker);
+        Worker savedWorker = workerRepository.save(worker);
+        log.info("Worker registered successfully with ID: {}", savedWorker.getId());
+        return savedWorker;
     }
     
     public Worker loginWorker(String email, String password) {
+        log.info("Processing login request for worker: {}", email);
         return workerRepository.findByEmail(email)
-            .filter(w -> passwordEncoder.matches(password, w.getPassword()))
-            .orElse(null);
+            .filter(w -> {
+                boolean match = passwordEncoder.matches(password, w.getPassword());
+                if (match) {
+                    log.info("Login successful for worker: {}", email);
+                } else {
+                    log.warn("Login failed for worker: {} (password mismatch)", email);
+                }
+                return match;
+            })
+            .orElseGet(() -> {
+                log.warn("Login failed: Worker with email {} not found", email);
+                return null;
+            });
     }
 
-    // READ ALL
     public List<Worker> getAllWorkers() {
+        log.debug("Fetching all workers");
         return workerRepository.findAll();
     }
 
-    // READ BY ID
     public Worker getWorkerById(Long id) {
+        log.debug("Fetching worker profile by ID: {}", id);
         return workerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Worker not found with id " + id));
+                .orElseThrow(() -> {
+                    log.warn("Worker lookup failed: ID {} not found", id);
+                    return new ResourceNotFoundException("Worker not found with id " + id);
+                });
     }
 
-    // UPDATE
     public Worker updateWorker(Long id, Worker updatedWorker) {
-
+        log.info("Updating worker details for ID: {}", id);
         Worker existingWorker = workerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Worker not found with id " + id));
+                .orElseThrow(() -> {
+                    log.warn("Worker update failed: ID {} not found", id);
+                    return new ResourceNotFoundException("Worker not found with id " + id);
+                });
 
         existingWorker.setName(updatedWorker.getName());
         existingWorker.setPhoneNumber(updatedWorker.getPhoneNumber());
@@ -55,26 +83,33 @@ public class WorkerService {
         existingWorker.setCity(updatedWorker.getCity());
         existingWorker.setAvailable(updatedWorker.isAvailable());
 
-        return workerRepository.save(existingWorker);
+        Worker savedWorker = workerRepository.save(existingWorker);
+        log.info("Worker details updated successfully for ID: {}", id);
+        return savedWorker;
     }
 
-    // DELETE
     public void deleteWorker(Long id) {
+        log.info("Request to delete worker ID: {}", id);
+        if (!workerRepository.existsById(id)) {
+            log.warn("Worker deletion failed: ID {} not found", id);
+            throw new ResourceNotFoundException("Worker not found with id " + id);
+        }
         workerRepository.deleteById(id);
+        log.info("Worker ID: {} deleted successfully", id);
     }
 
-    // SEARCH BY SKILL
     public List<Worker> findWorkersBySkill(String skill) {
+        log.debug("Searching workers by skill: {}", skill);
         return workerRepository.findBySkill(skill);
     }
 
-    // SEARCH BY SKILL AND CITY
     public List<Worker> findWorkersBySkillAndCity(String skill, String city) {
+        log.debug("Searching workers by skill: {} and city: {}", skill, city);
         return workerRepository.findBySkillAndCity(skill, city);
     }
 
-    // PAGINATION
     public Page<Worker> getWorkersPaged(Pageable pageable) {
+        log.debug("Fetching workers paged: {}", pageable);
         return workerRepository.findAll(pageable);
     }
-}
+}

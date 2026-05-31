@@ -1,68 +1,66 @@
 package com.sattaees.sattaees.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "workers")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Worker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Name cannot be empty")
+    @Size(max = 100, message = "Name cannot exceed 100 characters")
     private String name;
+
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Invalid email format")
     private String email;
+
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
+
+    @NotBlank(message = "Phone number cannot be empty")
     private String phoneNumber;
+
+    @NotBlank(message = "Skill must be specified")
     private String skill;
+
+    @Min(value = 0, message = "Experience cannot be negative")
+    @Max(value = 50, message = "Experience cannot exceed 50 years")
     private int experience;
+
+    @NotBlank(message = "City cannot be empty")
     private String city;
-    private boolean available;
+
+    private boolean available = true;
     
-    // Premium fields
+    @NotNull(message = "Hourly rate must be specified")
+    @Min(value = 0, message = "Hourly rate cannot be negative")
     private Double hourlyRate;
-    private Double averageRating;
-    private Integer totalReviews;
 
-    public Worker() {}
+    @Min(value = 0, message = "Average rating cannot be negative")
+    @Max(value = 5, message = "Average rating cannot exceed 5.0")
+    private Double averageRating = 0.0;
 
-    public Worker(Long id, String name, String email, String password, String phoneNumber, String skill, int experience, String city, boolean available, Double hourlyRate, Double averageRating, Integer totalReviews) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.skill = skill;
-        this.experience = experience;
-        this.city = city;
-        this.available = available;
-        this.hourlyRate = hourlyRate;
-        this.averageRating = averageRating;
-        this.totalReviews = totalReviews;
-    }
-
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getPassword() { return password; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public String getSkill() { return skill; }
-    public int getExperience() { return experience; }
-    public String getCity() { return city; }
-    public boolean isAvailable() { return available; }
-    public Double getHourlyRate() { return hourlyRate; }
-    public Double getAverageRating() { return averageRating; }
-    public Integer getTotalReviews() { return totalReviews; }
-
-    public void setId(Long id) { this.id = id; }
-    public void setName(String name) { this.name = name; }
-    public void setEmail(String email) { this.email = email; }
-    public void setPassword(String password) { this.password = password; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-    public void setSkill(String skill) { this.skill = skill; }
-    public void setExperience(int experience) { this.experience = experience; }
-    public void setCity(String city) { this.city = city; }
-    public void setAvailable(boolean available) { this.available = available; }
-    public void setHourlyRate(Double hourlyRate) { this.hourlyRate = hourlyRate; }
-    public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }
-    public void setTotalReviews(Integer totalReviews) { this.totalReviews = totalReviews; }
+    @Min(value = 0, message = "Total reviews count cannot be negative")
+    private Integer totalReviews = 0;
 }
+

@@ -1,167 +1,122 @@
-# Sattaees (सत्ताईस) 🛠️
-> **Daily Wage Labor Service Platform** — Connecting local daily wage workers and skilled laborers directly with customers in need of immediate services.
+# Sattaees (सत्ताईस)
 
-Sattaees is a modern web application designed to bridge the gap between daily wage workers (such as electricians, plumbers, carpenters, painters, and general labor) and customers. The system provides secure authentication, direct job request booking, and a reviews/ratings system to build trust within the community.
+### High-Fidelity Local Labor Service Platform
 
----
-
-## 🌟 Key Features
-
-### 👤 Customer Portal
-- **Dashboard**: View list of active/available workers filtered by skills.
-- **Job Booking**: Create new job requests specifying description, wage, date, and location.
-- **Worker Reviews**: Rate and review workers after job completion.
-- **History**: Track past and current job requests and bookings.
-
-### 👷 Worker Portal
-- **Dashboard**: Manage availability status and view assigned job requests.
-- **Skill Profile**: Highlight primary skills, contact information, and hourly/daily rates.
-- **Job Flow**: Accept, reject, or mark job requests as completed.
-- **Reputation**: Build a profile with aggregate ratings and feedback.
-
-### 🔒 Security & Backend
-- **JWT Authentication**: Role-based access control (CUSTOMER / WORKER) for secure actions.
-- **Swagger Documentation**: Interactive OpenAPI UI to inspect and test all backend endpoints.
-- **Local DB**: File-based H2 database for zero-configuration testing.
+Sattaees is a full-stack platform designed to establish a secure, trusted connection between customers and local daily-wage laborers (such as electricians, plumbers, carpenters, and painters). By streamlining the job-booking pipeline, providing token-based authentication, and exposing rating metrics, Sattaees removes intermediation and provides transparent local services.
 
 ---
 
-## 🛠️ Technology Stack
+## 🏗️ Architectural Topology
 
-### Backend
-- **Framework**: Spring Boot 3.2.1 (Java 17)
-- **Database**: H2 (File-based local DB)
-- **JPA & ORM**: Spring Data JPA / Hibernate
-- **Security**: Spring Security + JSON Web Tokens (JWT)
-- **Documentation**: Springdoc OpenAPI (Swagger UI)
+Sattaees employs a decoupled, tiered client-server architecture with stateless REST endpoints and a secure Spring Security middle tier:
 
-### Frontend
-- **Framework**: React 19 (Vite 8)
-- **Routing**: React Router DOM v7
-- **Icons**: Lucide React
-- **Styling**: Modern, responsive Custom CSS with CSS variables, gradients, and micro-interactions.
+```mermaid
+graph TD
+    subgraph Client ["React Client (Vite 8)"]
+        UI["UI Pages (Dashboard/Auth)"]
+        AX["Axios Client Wrapper"]
+        UI --> AX
+    end
 
----
+    subgraph Server ["Spring Boot Application Server"]
+        JF["JWT Filter (Auth Interceptor)"]
+        RC["REST Controllers (Endpoints)"]
+        SV["Service Layer (Business Rules)"]
+        RP["Spring Data JPA Repositories"]
+        
+        AX -->|HTTPS + Bearer Token| JF
+        JF --> RC
+        RC --> SV
+        SV --> RP
+    end
 
-## 📁 Project Structure
-
-```text
-sattaees/
-├── src/main/java/com/sattaees/sattaees/
-│   ├── config/          # Spring Security, CORS & JWT filter config
-│   ├── controller/      # REST API Controllers (Customer, Worker, Jobs, Reviews, Auth)
-│   ├── dto/             # Data Transfer Objects (Auth, Login Requests)
-│   ├── init/            # Sample Data Initializer (runs on startup)
-│   ├── model/           # JPA Entities (Customer, Worker, JobRequest, Review)
-│   ├── repository/      # Spring Data JPA Repositories
-│   ├── service/         # Business logic layer
-│   └── util/            # Helper utils (JWT creation/validation)
-├── src/main/resources/
-│   └── application.properties  # Database, H2, and server settings
-├── frontend/
-│   ├── src/
-│   │   ├── components/  # Reusable UI components (Navbar, Footer, WorkerCard)
-│   │   ├── pages/       # Dashboard & Auth views (Home, Login, Signup, Dashboards)
-│   │   ├── services/    # API calling client (Axios/fetch wrappers)
-│   │   ├── App.jsx      # Route management
-│   │   └── main.jsx     # Frontend entrypoint
-│   └── package.json
-└── pom.xml              # Maven dependencies configuration
+    subgraph Database ["Data Store"]
+        DB[(Local H2 File-based Engine)]
+        RP --> DB
+    end
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Technology Stack & Rationale
 
-### Prerequisites
-- **Java Development Kit (JDK)**: Version 17 or higher.
-- **Node.js**: Version 18 or higher.
-- **npm** or **yarn**.
+### Core Backend Services
+- **Spring Boot 3.2.1 (Java 17)**: High-performance microservice framework with dependency injection and built-in configuration servers.
+- **Spring Security & JWT**: Stateless session control utilizing JSON Web Tokens (HMAC-SHA256) for secure, role-based boundary verification (CUSTOMER / WORKER).
+- **Spring Data JPA**: Abstraction over Hibernate ORM to automate transaction processing and repository query creation.
+- **Jakarta Validation (JSR-380)**: Declarative request constraints enforced at the REST layer to prevent database pollution.
+- **Lombok**: Automates data model boilerplate (getters, setters, constructors) to enhance codebase maintainability.
+- **H2 Database Engine**: Embedded file-based SQL storage enabling immediate testing without active database server dependencies.
+
+### Frontend Interface
+- **React 19 & Vite 8**: Ultra-fast build toolchain and component framework.
+- **React Router DOM v7**: Declarative routing configuration for secure dashboard flows.
+- **Vanilla CSS Variables**: Cohesive HSL theme tokens, glassmorphism filters, and smooth scale hover translations.
 
 ---
 
-### Step 1: Run the Spring Boot Backend
+## 🔒 Security Flow (Stateless Authentication)
 
-1. Navigate to the root directory.
-2. Run the following command to start the Spring Boot application:
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Client (Customer/Worker)
+    participant Auth as Auth Controller
+    participant Filter as JWT Authorization Filter
+    participant Endpoint as Protected Controller
 
-```bash
-# Windows
-./mvnw.cmd spring-boot:run
-
-# macOS/Linux
-./mvnw spring-boot:run
+    User->>Auth: POST /api/auth/login (Credentials)
+    Auth-->>User: returns 200 OK + JWT Token (signed with HS256)
+    
+    Note over User, Filter: Submitting Subsequent Request
+    User->>Filter: Request with Authorization: Bearer <Token>
+    alt Token is Valid
+        Filter->>Filter: Extract Identity & Role Claims
+        Filter->>Endpoint: Propagate SecurityContextHolder
+        Endpoint-->>User: returns 200 OK (Data Payload)
+    else Token is Expired/Modified
+        Filter-->>User: returns 403 Forbidden / 401 Unauthorized
+    end
 ```
 
-The server will start on **[http://localhost:8080](http://localhost:8080)**.
+---
 
-> [!NOTE]
-> On startup, the application runs `DataInitializer.java` to pre-seed the H2 database with test customer and worker accounts, reviews, and job requests.
+## 🔌 API Gateway Interface
+
+All endpoints expect JSON request payloads and return structured JSON responses.
+
+### Stateless Authentication
+- **`POST /api/customers`**: Customer sign-up. Enforces valid email formats and a minimum 6-character password constraint.
+- **`POST /api/customers/login`**: Customer authentication. Returns a signed JWT token containing the account scope.
+- **`POST /api/workers`**: Worker registration. Validates category skills, hourly rates, and city locations.
+- **`POST /api/workers/login`**: Worker authentication. Returns a signed JWT token containing the worker scope.
+
+### Protected Labor Service Operations
+- **`GET /api/workers`**: Returns a list of active workers. Supports optional `skill` and `city` query filter parameters.
+- **`POST /api/jobs`**: Books a daily wage job request. Transition state defaults to `REQUESTED`. (Requires Customer Bearer Token).
+- **`PUT /api/jobs/{id}/status`**: Transitions the job status workflow (`ACCEPTED`, `COMPLETED`). Validates status flows (e.g. rejects direct transitions from `REQUESTED` to `COMPLETED`).
+
+### Reviews & Ratings
+- **`POST /api/reviews`**: Posts worker reviews and ratings. Updates the worker's average rating in the data store.
 
 ---
 
-### Step 2: Run the React Frontend
+## 📈 System Error Handling Specification
 
-1. Open a new terminal window.
-2. Navigate to the `frontend` folder:
-   ```bash
-   cd frontend
-   ```
-3. Install the dependencies:
-   ```bash
-   npm install
-   ```
-4. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
+To prevent stack-trace leakages, all exceptions are handled globally. The server returns standard, client-consumable JSON payloads:
 
-The frontend will run at **[http://localhost:5173](http://localhost:5173)**.
+```json
+{
+  "timestamp": "2026-05-31T17:46:50.123",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Worker not found with id 12",
+  "path": "uri=/api/workers/12"
+}
+```
 
----
-
-## 🔌 API Endpoints Summary
-
-### Authentication APIs
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/auth/customer/login` | Login as Customer (returns JWT Token) |
-| `POST` | `/api/auth/worker/login` | Login as Worker (returns JWT Token) |
-
-### Workers APIs
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/workers` | Get list of all workers (supports skill filter) |
-| `GET` | `/api/workers/{id}` | Get worker profile details |
-| `POST` | `/api/workers` | Create a new worker profile (Sign up) |
-| `PUT` | `/api/workers/{id}` | Update worker details (Requires Auth) |
-
-### Customers APIs
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/customers` | Create a new customer profile (Sign up) |
-| `GET` | `/api/customers/{id}` | Get customer profile details (Requires Auth) |
-
-### Job Requests APIs
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/jobs` | Create a new Job Request (Requires Customer Auth) |
-| `GET` | `/api/jobs/customer/{id}` | Get all jobs booked by a Customer |
-| `GET` | `/api/jobs/worker/{id}` | Get all jobs assigned to a Worker |
-| `PUT` | `/api/jobs/{id}/status` | Update job status (ACCEPTED, COMPLETED) |
-
-### Reviews APIs
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/reviews` | Post a worker review (Requires Customer Auth) |
-| `GET` | `/api/reviews/worker/{id}` | Get all reviews for a specific worker |
-
----
-
-## 🗃️ Development Resources & Utilities
-
-- **Interactive API Documentation (Swagger)**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
-- **H2 Database Console**: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
-  - **JDBC URL**: `jdbc:h2:file:./sattaeesdb`
-  - **Username**: `sa`
-  - **Password**: *(leave blank)*
+### Managed Custom Exceptions
+- **`ResourceNotFoundException`**: Triggered when requested IDs do not match database records. Returns `404 Not Found`.
+- **`DuplicateResourceException`**: Triggered on unique constraint violations (e.g., registering duplicate emails). Returns `409 Conflict`.
+- **`InvalidJobStatusException`**: Triggered when status transitions violate workflow guidelines. Returns `400 Bad Request`.
+- **`MethodArgumentNotValidException`**: Triggered on request validation checks failure. Returns `400 Bad Request` with an array detailing each violation field.
