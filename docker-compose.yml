@@ -1,41 +1,116 @@
 version: '3.8'
 
 services:
+  # ------------------------------------------------------------------
+  # 1. PostgreSQL Database
+  # ------------------------------------------------------------------
   db:
     image: postgres:15-alpine
     container_name: sattaees_db
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: sattaees
-      POSTGRES_USER: sattaees_user
-      POSTGRES_PASSWORD: sattaees_password
+      POSTGRES_DB: ${POSTGRES_DB:-sattaees}
+      POSTGRES_USER: ${POSTGRES_USER:-sattaees_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sattaees_password}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sattaees_user -d sattaees"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sattaees_user} -d ${POSTGRES_DB:-sattaees}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - sattaees-net
 
+  # ------------------------------------------------------------------
+  # 2. Redis Cache
+  # ------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: sattaees_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sattaees-net
+
+  # ------------------------------------------------------------------
+  # 3. Apache Kafka (KRaft mode - No Zookeeper needed)
+  # ------------------------------------------------------------------
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: sattaees_kafka
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: '/var/lib/kafka/data'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - sattaees-net
+
+  # ------------------------------------------------------------------
+  # 4. Spring Boot Modular Monolith Backend
+  # ------------------------------------------------------------------
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: sattaees_backend
+    restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/sattaees
-      - SPRING_DATASOURCE_USERNAME=sattaees_user
-      - SPRING_DATASOURCE_PASSWORD=sattaees_password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB:-sattaees}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-sattaees_user}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-sattaees_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - JWT_SECRET=${JWT_SECRET:-dGhpc2lzYXN1cGVyc2VjcmV0a2V5dGhhdG5lZWRzdG9iZWF0bGVhc3QyNTZiaXRzbG9uZ2ZvcmhtYWNzaGEyNTYxMjM0NQ==}
       - ALLOWED_ORIGINS=http://localhost,http://localhost:80,http://localhost:5173,http://localhost:5174
     depends_on:
       db:
         condition: service_healthy
-    restart: always
+      redis:
+        condition: service_healthy
+    networks:
+      - sattaees-net
 
+  # ------------------------------------------------------------------
+  # 5. Frontend Client Application
+  # ------------------------------------------------------------------
   frontend:
     build:
       context: ./frontend
@@ -43,11 +118,19 @@ services:
       args:
         - VITE_API_URL=http://localhost:8080/api
     container_name: sattaees_frontend
+    restart: unless-stopped
     ports:
       - "80:80"
     depends_on:
       - backend
-    restart: always
+    networks:
+      - sattaees-net
 
 volumes:
   postgres_data:
+  redis_data:
+  kafka_data:
+
+networks:
+  sattaees-net:
+    driver: bridge
